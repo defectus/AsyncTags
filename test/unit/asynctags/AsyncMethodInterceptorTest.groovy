@@ -8,7 +8,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import spock.lang.Specification
 
-@ContextConfiguration(locations = "classpath:/spring/async.xml")
+@ContextConfiguration(locations = ["classpath:/spring/async.xml","classpath:/spring/async-test.xml"])
 @TestFor(AsyncCallHelperService)
 class AsyncMethodInterceptorTest extends Specification {
 
