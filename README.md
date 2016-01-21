@@ -20,6 +20,7 @@ Make sure that your gsp contains the same tags at the places you want the conten
 
 ### Example page
 
+```html
 	<html>
 		<async:block>
 			<l:yourLongRunningTag data="${data}"/>
@@ -33,9 +34,11 @@ Make sure that your gsp contains the same tags at the places you want the conten
 			<l:yourOtherLongRunningTag data="${data2}"/>
 		</p>
 	</html> 
+```
 
 Your `yourLongRunningTag` may look like this
 	
+```groovy
 	class YourTagLib {
 		static namespace = "l"
     	YourService yourService
@@ -45,11 +48,13 @@ Your `yourLongRunningTag` may look like this
 			yourService.getSomeData(attrs.data)
 		}
 	}
+```
 
 Please note the tag we want to execute asynchronously is flagged with the `@AsyncTag` annotation.
 
 The last step is to make sure the service that provides the data for this tag is flagged with the `@AsyncMethod` annotation.
 
+```groovy
 	class YourService {
 
     	static transactional = false
@@ -59,6 +64,7 @@ The last step is to make sure the service that provides the data for this tag is
         	// Thread.sleep(2000)
     	}
 	}
+```
 
 ### Limitations
 
