@@ -1,5 +1,6 @@
 package asynctags
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import org.codehaus.groovy.grails.commons.DefaultGrailsTagLibClass
 import org.codehaus.groovy.grails.commons.GrailsApplication
@@ -17,18 +18,28 @@ class PostProcessor {
     @Autowired
     AsyncCallHelperService asyncCallHelperService
 
+    @CompileStatic
     ApplicationContext postProcess(ApplicationContext ctx) {
-        for (DefaultGrailsTagLibClass clazz : grailsApplication.tagLibClasses) {
+        for (DefaultGrailsTagLibClass clazz : extractAllTagLibs()) {
             for (String tagName : clazz.clazz.declaredFields.findAll {it.getAnnotation(AsyncTag)}*.name) {
                 String tagGetterName = MetaProperty.getGetterName(tagName, clazz.clazz)
-                MetaMethod tagGetter = clazz.clazz.metaClass.getMetaMethod(tagGetterName, null)
-                clazz.clazz.metaClass."$tagGetterName" = createTagWrappingClosure tagGetter
+                MetaMethod tagGetter = clazz.clazz.metaClass.getMetaMethod(tagGetterName)
+                replaceGetter(tagGetter, clazz, tagGetterName)
             }
         }
         ctx
     }
 
-    private Object callOriginalTag(Closure originalClosure, def attrs, def body) {
+    List<DefaultGrailsTagLibClass> extractAllTagLibs() {
+        return grailsApplication.tagLibClasses*.asType(DefaultGrailsTagLibClass)
+    }
+
+    void replaceGetter(MetaMethod tagGetter, DefaultGrailsTagLibClass clazz, String tagGetterName) {
+        clazz.clazz.metaClass."$tagGetterName" = createTagWrappingClosure tagGetter
+    }
+
+    @CompileStatic
+    Object callOriginalTag(Closure originalClosure, def attrs, def body) {
         def returnValue
         if (originalClosure.parameterTypes.size() == 0) {
             returnValue = originalClosure.call()

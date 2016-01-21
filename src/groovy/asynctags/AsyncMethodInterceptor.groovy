@@ -1,5 +1,6 @@
 package asynctags
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
@@ -14,6 +15,7 @@ import java.lang.reflect.Method
 @Log4j
 @Aspect
 @Component
+@CompileStatic
 class AsyncMethodInterceptor {
 
     @Autowired
@@ -25,10 +27,10 @@ class AsyncMethodInterceptor {
 
     @Around("anyPublicMethod() && @annotation(asyncMethod)")
     Object invoke(ProceedingJoinPoint pjp, AsyncMethod asyncMethod) throws Throwable {
+        Object returnValue = null
         try {
             MethodSignature signature = (MethodSignature) pjp.getSignature();
             Method method = signature.getMethod();
-            Object returnValue = null
             if (asyncCallHelperService.shouldEnqueue()) {
                 returnValue = asyncCallHelperService.
                     enqueueTask(asyncCallHelperService.generateKey(pjp.target, method, pjp.args), generateJointPointClosure(pjp))
@@ -36,10 +38,9 @@ class AsyncMethodInterceptor {
                 returnValue = asyncCallHelperService.
                     dequeueTask(asyncCallHelperService.generateKey(pjp.target, method, pjp.args), generateJointPointClosure(pjp))
             }
-            return returnValue
         }
         finally {
-
+            return returnValue
         }
     }
 
