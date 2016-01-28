@@ -73,5 +73,5 @@ For this to work you have to stick to several rules.
 1. The long running job needs to be in an `@AsyncMethod`. All the `@AsyncTag`s get executed twice so keep that in mind.
 2. Having said that you can further improve performance if you use the `AsyncCallHelperService.shouldEnqueue` method to see whether or not to do anything above calling a long running service method.
 3. If you call an `@AsyncMethod` twice make sure you provide different parameters or you risk race condition (async key is generated using the parameters).
-4. Your `@AsyncMethod`s shouldn't muted the global state, ideally they should be 'pure'.
-5. Any domain classes returned from an `@AsyncMethod` will be `detached`. Make sure you re-attach before using them.
+4. Your `@AsyncMethod`s shouldn't mutate the global state, ideally they should be 'pure'.
+5. Any domain classes returned from an `@AsyncMethod` will be `detached`. Make sure you re-attach them before using them.
