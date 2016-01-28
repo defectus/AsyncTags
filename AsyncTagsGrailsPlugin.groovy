@@ -28,6 +28,8 @@ class AsyncTagsGrailsPlugin {
     def description = 'A small plugin that makes (ideally by convention) selected tags'
     def documentation = "http://grails.org/plugin/async-tags"
     def license = "APACHE"
+    def issueManagement = [url: 'https://github.com/defectus/AsyncTags/issues']
+    def scm = [url: 'https://github.com/defectus/AsyncTags']
 
     def doWithSpring = {
 
