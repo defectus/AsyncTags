@@ -22,21 +22,14 @@ class AsyncTagsGrailsPlugin {
 
     def version = "1.0.0"
     def grailsVersion = "2.2 > *"
-    def pluginExcludes = [
-        "grails-app/views/error.gsp"
-    ]
-
     def title = "Async Tags Plugin"
     def author = "Ondrej Linek"
     def authorEmail = "ondrej.linek@gmail.com"
     def description = 'A small plugin that makes (ideally by convention) selected tags'
-
     def documentation = "http://grails.org/plugin/async-tags"
-
     def license = "APACHE"
-
-    def doWithWebDescriptor = {xml ->
-    }
+    def issueManagement = [url: 'https://github.com/defectus/AsyncTags/issues']
+    def scm = [url: 'https://github.com/defectus/AsyncTags']
 
     def doWithSpring = {
 
@@ -46,22 +39,11 @@ class AsyncTagsGrailsPlugin {
             grailsApplication = application
             asyncCallHelperService = asyncCallHelperService
         }
-        importBeans('classpath:/spring/async.xml')
-    }
 
-    def doWithDynamicMethods = {ctx ->
+        importBeans('classpath:/spring/async.xml')
     }
 
     def doWithApplicationContext = {ApplicationContext ctx ->
         ctx.getBean(PostProcessor).postProcess ctx
-    }
-
-    def onChange = {event ->
-    }
-
-    def onConfigChange = {event ->
-    }
-
-    def onShutdown = {event ->
     }
 }

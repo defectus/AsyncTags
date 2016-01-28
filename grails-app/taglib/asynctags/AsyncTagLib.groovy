@@ -19,6 +19,7 @@ package asynctags
 class AsyncTagLib {
 
     static namespace = "async"
+
     AsyncCallHelperService asyncCallHelperService
 
     /**
@@ -26,7 +27,7 @@ class AsyncTagLib {
      *
      * @attr waitForAll wait for all tasks to complete
      */
-    Closure block = {Map attrs, Closure body ->
+    def block = { Map attrs, Closure body ->
         asyncCallHelperService.startAsync()
         body()
         asyncCallHelperService.stopAsync()
