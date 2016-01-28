@@ -32,7 +32,6 @@ import static grails.async.Promises.waitAll
 @CompileStatic
 class AsyncCallHelperService {
 
-    static transactional = false
     static final String ASYNC_TAGS_KEY = 'AsyncTags.tags.key'
     static final String ASYNC_ROUND_KEY = 'AsyncTags.round.key'
 
@@ -51,7 +50,7 @@ class AsyncCallHelperService {
         waitAll(promises)
     }
 
-    Boolean shouldEnqueue() {
+    boolean shouldEnqueue() {
         !!RequestContextHolder.currentRequestAttributes().getAttribute(ASYNC_TAGS_KEY, RequestAttributes.SCOPE_REQUEST)
     }
 
@@ -74,7 +73,7 @@ class AsyncCallHelperService {
         return extractRequest().getAttribute(ASYNC_ROUND_KEY, RequestAttributes.SCOPE_REQUEST) as Map<String, Promise>
     }
 
-    String generateKey(Object target, Method method, Object... params) {
+    String generateKey(target, Method method, Object... params) {
         (target.hashCode() as String) + (method.hashCode() as String) +
             ((new SimpleKeyGenerator().generate(target, method, params) as String).hashCode() as String)
     }

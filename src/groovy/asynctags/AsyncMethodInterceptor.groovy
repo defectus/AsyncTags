@@ -17,7 +17,7 @@
 package asynctags
 
 import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component
 
 import java.lang.reflect.Method
 
-@Log4j
+@Slf4j
 @Aspect
 @Component
 @CompileStatic
@@ -38,15 +38,15 @@ class AsyncMethodInterceptor {
     AsyncCallHelperService asyncCallHelperService
 
     @Pointcut(value = "execution(public * *(..))")
-    public void anyPublicMethod() {
+    void anyPublicMethod() {
     }
 
     @Around("anyPublicMethod() && @annotation(asyncMethod)")
-    Object invoke(ProceedingJoinPoint pjp, AsyncMethod asyncMethod) throws Throwable {
-        Object returnValue = null
+    def invoke(ProceedingJoinPoint pjp, AsyncMethod asyncMethod) {
+        def returnValue
         try {
-            MethodSignature signature = (MethodSignature) pjp.getSignature();
-            Method method = signature.getMethod();
+            MethodSignature signature = (MethodSignature) pjp.signature
+            Method method = signature.method
             if (asyncCallHelperService.shouldEnqueue()) {
                 returnValue = asyncCallHelperService.
                     enqueueTask(asyncCallHelperService.generateKey(pjp.target, method, pjp.args), generateJointPointClosure(pjp))
@@ -62,8 +62,7 @@ class AsyncMethodInterceptor {
 
     Closure generateJointPointClosure(ProceedingJoinPoint pjp) {
         {_ ->
-            def returnValue = pjp.proceed()
-            returnValue
+            pjp.proceed()
         }
     }
 }

@@ -17,7 +17,7 @@
 package asynctags
 
 import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j
+import groovy.util.logging.Slf4j
 import org.codehaus.groovy.grails.commons.DefaultGrailsTagLibClass
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.web.pages.FastStringWriter
@@ -26,7 +26,7 @@ import org.codehaus.groovy.grails.web.taglib.GroovyPageAttributes
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.ApplicationContext
 
-@Log4j
+@Slf4j
 class PostProcessor {
 
     @Autowired
@@ -55,11 +55,11 @@ class PostProcessor {
     }
 
     @CompileStatic
-    Object callOriginalTag(Closure originalClosure, def attrs, def body) {
+    Object callOriginalTag(Closure originalClosure, attrs, body) {
         def returnValue
-        if (originalClosure.parameterTypes.size() == 0) {
+        if (!originalClosure.parameterTypes) {
             returnValue = originalClosure.call()
-        } else if (originalClosure.parameterTypes.size() == 1) {
+        } else if (originalClosure.parameterTypes.length == 1) {
             returnValue = originalClosure.call(attrs)
         } else {
             returnValue = originalClosure.call(attrs, body)
@@ -72,8 +72,8 @@ class PostProcessor {
             Closure originalTag = tagGetter.invoke(delegate) as Closure
             return {GroovyPageAttributes attrs, body ->
                 Writer capturedOutWriter = new FastStringWriter()
-                GroovyPageOutputStack.currentStack(originalTag.webRequest).push(capturedOutWriter);
-                Object returnValue
+                GroovyPageOutputStack.currentStack(originalTag.webRequest).push(capturedOutWriter)
+                def returnValue
                 try {
                     returnValue = callOriginalTag(originalTag, attrs, body)
                     if (asyncCallHelperService.shouldEnqueue()) {
@@ -81,11 +81,11 @@ class PostProcessor {
                         returnValue = ""
                     }
                 }
-                catch (Exception e) {
+                catch (e) {
                     log.error("An exception occured when executing tag <${tagGetter.name} ${attrs} />", e)
                 }
                 finally {
-                    GroovyPageOutputStack.currentStack(originalTag.webRequest).pop();
+                    GroovyPageOutputStack.currentStack(originalTag.webRequest).pop()
                 }
                 originalTag.out << capturedOutWriter
                 return returnValue
