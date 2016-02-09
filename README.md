@@ -23,8 +23,8 @@ Make sure that your gsp contains the same tags at the places you want the conten
 ```html
 	<html>
 		<async:block>
-			<l:yourLongRunningTag data="${data}"/>
-			<l:yourOtherLongRunningTag data="${data}"/>
+			<l:yourLongRunningTag data="${data1}"/>
+			<l:yourOtherLongRunningTag data="${data2}"/>
 			...
 		</async:block>
 		<p>
@@ -60,7 +60,7 @@ The last step is to make sure the service that provides the data for this tag is
     	static transactional = false
 
     	@AsyncMethod
-    	def yourService.getSomeData(data) {
+    	def getSomeData(data) {
         	// Thread.sleep(2000)
     	}
 	}
