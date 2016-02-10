@@ -20,7 +20,8 @@ import org.springframework.context.ApplicationContext
 
 class AsyncTagsGrailsPlugin {
 
-    def version = "1.0.0"
+    def name = "async-tags"
+    def version = "1.0.1"
     def grailsVersion = "2.2 > *"
     def title = "Async Tags Plugin"
     def author = "Ondrej Linek"
